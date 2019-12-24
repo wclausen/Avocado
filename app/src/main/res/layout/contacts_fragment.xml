@@ -3,12 +3,15 @@
     android:id="@+id/contacts_fragment"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="@dimen/normalPadding">
 
     <TextView
         android:id="@+id/helloWorld"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/some_contacts" />
+
+    <include layout="@layout/contacts_list" />
 
 </LinearLayout>
