@@ -1,6 +1,5 @@
 package com.wclausen.avocado
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.database.Cursor
 import android.os.Bundle
@@ -8,6 +7,7 @@ import android.provider.ContactsContract
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
+import com.afollestad.assent.Permission
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.Single
@@ -70,7 +70,7 @@ class ContactsRepository @Inject constructor(
     }
 
     init {
-        if (permissionsManager.hasPermission(Manifest.permission.READ_CONTACTS)) {
+        if (permissionsManager.hasPermission(Permission.READ_CONTACTS)) {
             activityProvider.get().supportLoaderManager.initLoader<Cursor>(LOADER_ID, null,
                 object : LoaderManager.LoaderCallbacks<Cursor> {
                     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
@@ -106,7 +106,7 @@ class ContactsRepository @Inject constructor(
 
 
     fun fetchContacts(searchName: String): Single<List<Person>> {
-        if (!permissionsManager.hasPermission(Manifest.permission.READ_CONTACTS)) {
+        if (!permissionsManager.hasPermission(Permission.READ_CONTACTS)) {
             return Single.just(emptyList())
         }
         return Single.just(listOf("Elon Musk", "Abraham Lincoln").map { Person(it) })
