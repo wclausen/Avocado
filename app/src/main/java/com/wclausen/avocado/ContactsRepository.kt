@@ -7,12 +7,9 @@ import android.provider.ContactsContract
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
-import com.afollestad.assent.Permission
-import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
 import io.reactivex.Single
+import io.reactivex.SingleEmitter
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.collections.HashSet
@@ -52,16 +49,11 @@ private val SELECTION: String =
 
 
 class ContactsRepository @Inject constructor(
-    val activityProvider: Provider<MainActivity>,
-    val permissionsManager: PermissionManager
+    val activityProvider: Provider<MainActivity>
 ) {
 
-    private val contactsObservers: MutableSet<ObservableEmitter<List<Person>>> =
-        Collections.synchronizedSet(HashSet<ObservableEmitter<List<Person>>>())
-    private val contactsObservable = Observable.create<List<Person>> { observer ->
-        contactsObservers.add(observer)
-        observer.setCancellable { contactsObservers.remove(observer) }
-    }
+    private val contactsObservers: MutableSet<SingleEmitter<List<Person>>> =
+        Collections.synchronizedSet(HashSet<SingleEmitter<List<Person>>>())
     // Defines the array to hold values that replace the ?
     private val selectionArgs = arrayOf("")
 
@@ -69,48 +61,45 @@ class ContactsRepository @Inject constructor(
         private const val LOADER_ID = 787
     }
 
-    init {
-        if (permissionsManager.hasPermission(Permission.READ_CONTACTS)) {
-            activityProvider.get().supportLoaderManager.initLoader<Cursor>(LOADER_ID, null,
-                object : LoaderManager.LoaderCallbacks<Cursor> {
-                    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-                        return CursorLoader(
-                            activityProvider.get(),
-                            ContactsContract.Contacts.CONTENT_URI,
-                            PROJECTION,
-                            SELECTION,
-                            selectionArgs,
-                            null
-                        )
-                    }
-
-                    override fun onLoaderReset(loader: Loader<Cursor>) {
-                    }
-
-                    override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor) {
-                        val names = mutableListOf<String>()
-                        if (cursor.moveToFirst()) {
-                            do {
-                                names.add(cursor.getString(CONTACT_NAME_INDEX))
-                            } while (cursor.moveToNext())
-                        }
-                        cursor.close()
-                        contactsObservers.map {
-                            it.onNext(names.map { Person(it) })
-                        }
-                    }
-
-                })
-        }
-    }
-
-
     fun fetchContacts(searchName: String): Single<List<Person>> {
-        if (!permissionsManager.hasPermission(Permission.READ_CONTACTS)) {
-            return Single.just(emptyList())
+        selectionArgs[0] = "%$searchName%"
+        @Suppress("DEPRECATION")
+        activityProvider.get().supportLoaderManager.restartLoader<Cursor>(LOADER_ID, null,
+            object : LoaderManager.LoaderCallbacks<Cursor> {
+                override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+                    return CursorLoader(
+                        activityProvider.get(),
+                        ContactsContract.Contacts.CONTENT_URI,
+                        PROJECTION,
+                        SELECTION,
+                        selectionArgs,
+                        null
+                    )
+                }
+
+                override fun onLoaderReset(loader: Loader<Cursor>) {
+                }
+
+                override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor) {
+                    val names = mutableListOf<String>()
+                    if (cursor.moveToFirst()) {
+                        do {
+                            names.add(cursor.getString(CONTACT_NAME_INDEX))
+                        } while (cursor.moveToNext())
+                    }
+                    contactsObservers.map {
+                        it.onSuccess(names.map { Person(it) })
+                    }
+                }
+
+            })
+
+        return Single.create<List<Person>> { it ->
+            it.setCancellable {
+                contactsObservers.remove(it)
+            }
+            contactsObservers.add(it)
         }
-        return Single.just(listOf("Elon Musk", "Abraham Lincoln").map { Person(it) })
-            .delay(2, TimeUnit.SECONDS)
     }
 
 

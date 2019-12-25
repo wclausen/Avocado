@@ -4,7 +4,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.ListAdapter
 import com.afollestad.assent.Permission
 import com.airbnb.mvrx.*
 import com.squareup.inject.assisted.Assisted
@@ -73,7 +72,21 @@ class ContactsFragment : InjectedFragment(R.layout.contacts_fragment) {
     }
 
     override fun invalidate() = withState(viewModel) { state ->
-        helloWorld.text = state.contacts()?.get(0)?.name
+        when (state.contacts) {
+            Uninitialized -> {
+            }
+            is Loading -> {
+            }
+            is Success -> {
+                contacts_list.adapter = ArrayAdapter<String>(
+                    view!!.context,
+                    R.layout.contacts_list_item,
+                    R.id.contact_name,
+                    state.contacts()!!.map { it.name })
+            }
+            is Fail -> {
+            }
+        }
     }
 
 }
