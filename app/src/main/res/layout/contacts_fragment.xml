@@ -16,7 +16,9 @@
         android:id="@+id/search_text_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_a_name" />
+        android:hint="@string/enter_a_name"
+        android:importantForAutofill="no"
+        android:inputType="text" />
 
     <Button
         android:id="@+id/search_button"
