@@ -1,4 +1,4 @@
-package com.wclausen.avocado
+package com.wclausen.avocado.addcontact
 
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -8,7 +8,12 @@ import com.afollestad.assent.Permission
 import com.airbnb.mvrx.*
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import com.wclausen.avocado.AvocadoApplication.Companion.injector
+import com.wclausen.avocado.ContactsRepository
+import com.wclausen.avocado.R
+import com.wclausen.avocado.base.AvocadoApplication.Companion.injector
+import com.wclausen.avocado.base.AvocadoViewModel
+import com.wclausen.avocado.base.InjectedFragment
+import com.wclausen.avocado.permissions.PermissionManager
 import kotlinx.android.synthetic.main.contacts_fragment.*
 import kotlinx.android.synthetic.main.contacts_list.*
 import javax.inject.Inject
@@ -68,7 +73,11 @@ class ContactsFragment : InjectedFragment(R.layout.contacts_fragment) {
         search_button.setOnClickListener {
             viewModel.fetchContacts(search_text_field.text.toString())
         }
-        contacts_list.adapter = ArrayAdapter<String>(activity!!, R.layout.contacts_list_item, R.id.contact_name)
+        contacts_list.adapter = ArrayAdapter<String>(
+            activity!!,
+            R.layout.contacts_list_item,
+            R.id.contact_name
+        )
     }
 
     override fun invalidate() = withState(viewModel) { state ->

@@ -1,10 +1,11 @@
-package com.wclausen.avocado
+package com.wclausen.avocado.permissions
 
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import com.afollestad.assent.AssentResult
 import com.afollestad.assent.Permission
 import com.afollestad.assent.askForPermissions
+import com.wclausen.avocado.MainActivity
 import javax.inject.Inject
 
 

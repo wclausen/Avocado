@@ -2,6 +2,9 @@ package com.wclausen.avocado
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.wclausen.avocado.base.AvocadoApplication
+import com.wclausen.avocado.di.AndroidModule
+import com.wclausen.avocado.di.DaggerAppComponent
 
 class MainActivity : AppCompatActivity() {
 

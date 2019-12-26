@@ -6,6 +6,10 @@ import com.afollestad.assent.Permission
 import com.airbnb.mvrx.Fail
 import com.airbnb.mvrx.withState
 import com.google.common.truth.Truth.assertThat
+import com.wclausen.avocado.addcontact.ContactsState
+import com.wclausen.avocado.addcontact.ContactsViewModel
+import com.wclausen.avocado.addcontact.Person
+import com.wclausen.avocado.permissions.PermissionManager
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -18,11 +22,12 @@ class ContactsViewModelTest : MvRxTest() {
     private val initialState = ContactsState()
     private val contactsRepository = mockk<ContactsRepository>(relaxed = true)
     private val permissionManager = mockk<PermissionManager>(relaxed = true)
-    private val contactsViewModel = ContactsViewModel(
-        initialState,
-        contactsRepository,
-        permissionManager
-    )
+    private val contactsViewModel =
+        ContactsViewModel(
+            initialState,
+            contactsRepository,
+            permissionManager
+        )
 
     @Test
     fun `GIVEN read contacts permission not granted WHEN fetching contacts THEN request permission`() {

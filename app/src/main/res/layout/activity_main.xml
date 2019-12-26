@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/contacts_fragment"
-        android:name="com.wclausen.avocado.ContactsFragment"
+        android:name="com.wclausen.avocado.addcontact.ContactsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

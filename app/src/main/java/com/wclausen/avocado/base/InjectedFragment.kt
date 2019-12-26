@@ -1,4 +1,4 @@
-package com.wclausen.avocado
+package com.wclausen.avocado.base
 
 import android.content.Context
 import com.airbnb.mvrx.BaseMvRxFragment

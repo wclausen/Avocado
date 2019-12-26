@@ -1,4 +1,4 @@
-package com.wclausen.avocado
+package com.wclausen.avocado.base
 
 import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.MvRxState

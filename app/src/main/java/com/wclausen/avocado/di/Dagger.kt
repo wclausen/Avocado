@@ -1,9 +1,8 @@
-package com.wclausen.avocado
+package com.wclausen.avocado.di
 
-import android.app.Application
-import com.airbnb.mvrx.MvRx
-import com.airbnb.mvrx.MvRxViewModelConfigFactory
 import com.squareup.inject.assisted.dagger2.AssistedModule
+import com.wclausen.avocado.MainActivity
+import com.wclausen.avocado.addcontact.ContactsFragment
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -26,21 +25,4 @@ interface AppComponent {
 
     fun inject(contactsFragment: ContactsFragment)
     fun inject(contactsFragment: MainActivity)
-}
-
-class AvocadoApplication : Application() {
-
-    lateinit var component: AppComponent
-
-    override fun onCreate() {
-        super.onCreate()
-        MvRx.viewModelConfigFactory = MvRxViewModelConfigFactory(this)
-        INSTANCE = this
-    }
-
-    companion object {
-        private lateinit var INSTANCE: AvocadoApplication
-
-        fun injector() = INSTANCE.component
-    }
 }

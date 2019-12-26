@@ -7,6 +7,7 @@ import android.provider.ContactsContract
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
+import com.wclausen.avocado.addcontact.Person
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import java.util.*
@@ -88,10 +89,13 @@ class ContactsRepository @Inject constructor(
                         } while (cursor.moveToNext())
                     }
                     contactsObservers.map {
-                        it.onSuccess(names.map { Person(it) })
+                        it.onSuccess(names.map {
+                            Person(
+                                it
+                            )
+                        })
                     }
                 }
-
             })
 
         return Single.create<List<Person>> { it ->
@@ -101,6 +105,5 @@ class ContactsRepository @Inject constructor(
             contactsObservers.add(it)
         }
     }
-
 
 }
